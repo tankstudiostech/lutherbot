@@ -9,7 +9,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.listen(process.env.PORT || 5000);
-app.post('/getverse', function (req, res) {
+app.get('/getverse', function (req, res) {
   res.header('Access-Control-Allow-Origin', req.headers.origin);
   var text = req.body.text;
   if (text != undefined) {
