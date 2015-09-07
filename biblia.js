@@ -15,13 +15,13 @@ this.getReferenceFromText = function(text, callback) {
 	var url = bibliaUrl + '/scan.js?text=' + text + '&key=' + token;
 	
 	var options = {
-		proxy: process.env.http_proxy,
+		proxy: process.env.https_proxy,
 		url: url,
 		method: 'GET'	
 	};
 	
 	console.log("Posting to " + url);
-	request.post(options, function (err, res, body) {
+	request.get(options, function (err, res, body) {
 		callback(body);
 	});
 }
