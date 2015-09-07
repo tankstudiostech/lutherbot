@@ -20,8 +20,8 @@ this.getReferenceFromText = function(text, callback) {
 		method: 'GET'	
 	};
 	
-	console.log("Posting to " + url);
-	request.post(options, function (err, res, body) {
+	console.log("GET to " + url);
+	request.get(options, function (err, res, body) {
 		callback(body);
 	});
 }
