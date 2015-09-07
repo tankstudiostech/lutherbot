@@ -12,7 +12,9 @@ this.getVerse = function(text, callback) {
 		if(res.results.length > 0)
 		{
 			getTextFromReference(res.results[0].passage, function(newData) {
+				console.log("Received reference text: " + newData);
 				text = JSON.parse(newData);
+				console.log("Received reference text: " + text);
 				var sendBack = {
 					"text": text.text,
 					"reference": res.results[0].passage
@@ -34,7 +36,7 @@ this.getReferenceFromText = function(text, callback) {
 	
 	var options = {
 		proxy: process.env.https_proxy,
-		url: url,
+		url: encodeURI(url),
 		method: 'GET'	
 	};
 	
@@ -48,7 +50,7 @@ function getTextFromReference(reference, callback) {
 	var url = bibliaUrl + '/content/LEB.txt.json?passage=' + reference + '&key=' + token;
 	var options = {
 		proxy: process.env.https_proxy,
-		url: url,
+		url: encodeURI(url),
 		method: 'GET'	
 	};
 	
