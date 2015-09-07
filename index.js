@@ -11,15 +11,15 @@ app.use(bodyParser.urlencoded({
 app.listen(process.env.PORT || 5000);
 app.get('/getverse', function (req, res) {
   res.header('Access-Control-Allow-Origin', req.headers.origin);
-  var text = req.body.text;
+  var text = req.query.text;
   if (text != undefined) {
     console.log("Body Text: " + text);
     
-    biblia.getVerse(req.body.text, function(data) {
+    biblia.getVerse(text, function(data) {
       res.send(data);
     });
   }
   else {
-    res.send("Text not defined in body");
+    res.send("{\"err\":\"Text parameter not defined in body\"}");
   }
 });
