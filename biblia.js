@@ -16,6 +16,7 @@ this.getVerse = function(text, callback) {
 				text = JSON.parse(newData);
 				console.log("Received reference text: " + text);
 				var sendBack = {
+					"ok": "true",
 					"text": text.text,
 					"reference": res.results[0].passage
 				}
@@ -25,7 +26,12 @@ this.getVerse = function(text, callback) {
 		}
 		else
 		{
-			callback("");
+			var err = {
+					"ok": "false",
+					"err": "No reference found"
+				
+				}
+			callback(err);
 		}
 	});
 };
@@ -42,6 +48,7 @@ this.getReferenceFromText = function(text, callback) {
 	
 	console.log("GET to " + url);
 	request.get(options, function (err, res, body) {
+		console.log("Reference: " + body);
 		callback(body);
 	});
 };
