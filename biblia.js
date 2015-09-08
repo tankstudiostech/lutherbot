@@ -1,9 +1,9 @@
 var request = require('request');
 var config = require('./config');
 
-var token = config.config.bibliatoken;
-var defaultToken = config.config.bibliaDefaultToken;
-var bibliaUrl = config.config.bibliaUrl;
+var token = process.env.bibliaToken || config.config.bibliatoken;
+var defaultToken = process.env.bibliaDefaultToken || config.config.bibliaDefaultToken;
+var bibliaUrl = process.env.bibliaUrl || config.config.bibliaUrl;
 
 this.getVerse = function(text, callback) {
 	console.log("Getting Reference from " + text);
