@@ -16,7 +16,7 @@ this.getVerse = function(text, callback) {
 				text = JSON.parse(newData);
 				console.log("Received reference text: " + text);
 				var sendBack = {
-					"ok": "true",
+					"ok": true,
 					"text": text.text,
 					"reference": res.results[0].passage
 				}
@@ -27,7 +27,7 @@ this.getVerse = function(text, callback) {
 		else
 		{
 			var err = {
-					"ok": "false",
+					"ok": false,
 					"err": "No reference found"
 				
 				}
