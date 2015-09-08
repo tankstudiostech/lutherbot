@@ -54,7 +54,7 @@ this.getReferenceFromText = function(text, callback) {
 };
 
 function getTextFromReference(reference, callback) {
-	var url = bibliaUrl + '/content/ESV.txt.json?passage=' + reference + '&key=' + token;
+	var url = bibliaUrl + '/content/LEB.txt.json?passage=' + reference + '&key=' + token;
 	var options = {
 		proxy: process.env.https_proxy,
 		url: encodeURI(url),
