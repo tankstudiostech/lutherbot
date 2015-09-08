@@ -1,8 +1,9 @@
 var request = require('request');
+var config = require('./config');
 
-var token = 'af3e9dd726db10140bb80cedd99863f8';
-var defaultToken = 'fd37d8f28e95d3be8cb4fbc37e15e18e';
-var bibliaUrl = "https://api.biblia.com/v1/bible";
+var token = config.config.bibliatoken;
+var defaultToken = config.config.bibliaDefaultToken;
+var bibliaUrl = config.config.bibliaUrl;
 
 this.getVerse = function(text, callback) {
 	console.log("Getting Reference from " + text);
