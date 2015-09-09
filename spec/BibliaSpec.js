@@ -1,60 +1,94 @@
-describe("Player", function() {
-  var Player = require('../../lib/jasmine_examples/Player');
-  var Song = require('../../lib/jasmine_examples/Song');
-  var player;
-  var song;
-
-  beforeEach(function() {
-    player = new Player();
-    song = new Song();
-  });
-
-  it("should be able to play a Song", function() {
-    player.play(song);
-    expect(player.currentlyPlayingSong).toEqual(song);
-    expect(1).toEqual(2);
-    //demonstrates use of custom matcher
-    expect(player).toBePlaying(song);
-  });
-
-  describe("when song has been paused", function() {
-    beforeEach(function() {
-      player.play(song);
-      player.pause();
+describe("Biblia", function() {
+  describe("URL Builder", function() {
+    var builder = require('../lib/bibliaUrlBuilder');
+    
+    it("should build reference from text url", function() {
+      var url = builder.getReferenceFromText("text", "token token");
+      var expectedUrl = 'https://api.biblia.com/v1/bible/scan.text?text=text&key=token%20token';
+      expect(url).toEqual(expectedUrl);      
     });
-
-    it("should indicate that the song is currently paused", function() {
-      expect(player.isPlaying).toBeFalsy();
-
-      // demonstrates use of 'not' with a custom matcher
-      expect(player).not.toBePlaying(song);
-    });
-
-    it("should be possible to resume", function() {
-      player.resume();
-      expect(player.isPlaying).toBeTruthy();
-      expect(player.currentlyPlayingSong).toEqual(song);
+    
+    it("should build passage from reference url", function() {
+      var url = builder.getPassageFromReference("LEB", "text", "token token");
+      var expectedUrl = 'https://api.biblia.com/v1/bible/content/LEB.txt.json?passage=text&key=token%20token';
+      expect(url).toEqual(expectedUrl);      
     });
   });
+  
+  describe("API Wrapper", function() {
+    var biblia = require('../lib/bibliaApiWrapper');
+    var urlBuilder = {
+        getReferenceFromText: function (text, token) {
+          return text + token;
+        },
+        getPassageFromReference: function (version, reference, token) {
+          return version + reference + token;
+        }
+      };
 
-  // demonstrates use of spies to intercept and test method calls
-  it("tells the current song if the user has made it a favorite", function() {
-    spyOn(song, 'persistFavoriteStatus');
-
-    player.play(song);
-    player.makeFavorite();
-
-    expect(song.persistFavoriteStatus).toHaveBeenCalledWith(true);
-  });
-
-  //demonstrates use of expected exceptions
-  describe("#resume", function() {
-    it("should throw an exception if song is already playing", function() {
-      player.play(song);
-
-      expect(function() {
-        player.resume();
-      }).toThrowError("song is already playing");
+    it("should get a verse from text", function() {
+      var text = "John 3:16";
+      var token = "token";
+      
+      var request =  {
+        get: function(options, callback) {
+          if(options.url === "LEBreferencetoken") {
+            callback({}, {}, '{"text": "rawr"}');
+          }
+          else {
+            callback({}, {}, "{\"results\": [{\"passage\": \"reference\"}]}");
+          }
+        }
+      };
+      
+      bib = new biblia.bib(request, token, urlBuilder);
+      bib.getVerse(text, function(data) {
+        expect(data.ok).toEqual(true);
+        expect(data.text).toEqual('rawr');
+        expect(data.reference).toEqual('reference');
+      });
+    });
+    
+    it("should get give err when no verse found", function() {
+      var text = "John 3:16";
+      var token = "token";
+      
+      var request =  {
+        get: function(options, callback) {
+          if(options.url === "LEBreferencetoken") {
+            callback({}, {}, '{"text": "rawr"}');
+          }
+          else {
+            callback({}, {}, "{\"results\": []}");
+          }
+        }
+      };
+      
+      bib = new biblia.bib(request, token, urlBuilder);
+      bib.getVerse(text, function(data) {
+        expect(data.ok).toEqual(false);
+        expect(data.err).toEqual('No reference found');
+      });
+    });
+    
+    it("should get passage from a reference", function() {
+      var reference = "reference";
+      var token = "token";
+      var version = "LEB";
+      var requestResponse = "yay";
+      
+      var request =  {
+        get: function(options, callback) {
+          expect(options.url).toEqual(version + reference + token);
+          callback({}, {}, requestResponse);
+        }
+      };
+      
+      bib = new biblia.bib(request, token, urlBuilder);
+      bib.getPassageFromReference(reference, function(data) {
+        expect(data).toEqual(requestResponse);
+      });
     });
   });
+  
 });
