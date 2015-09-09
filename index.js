@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
 var request = require('request');
-var biblia = require('./biblia');
+var biblia = require('./lib/biblia');
 var bodyParser = require('body-parser')
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
