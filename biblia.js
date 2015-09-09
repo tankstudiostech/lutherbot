@@ -1,9 +1,18 @@
 var request = require('request');
-var config = require('./config');
+var token, defaultToken, bibliaUrl;
 
-var token = process.env.bibliaToken || config.config.bibliatoken;
-var defaultToken = process.env.bibliaDefaultToken || config.config.bibliaDefaultToken;
-var bibliaUrl = process.env.bibliaUrl || config.config.bibliaUrl;
+if((process.env.heroku || "false") === "true") {
+	token = process.env.bibliaToken;
+	defaultToken = process.env.bibliaDefaultToken;
+	bibliaUrl = process.env.bibliaUrl;
+}
+else {
+	var config = require('./config');
+	token = config.config.bibliatoken;
+	defaultToken = config.config.bibliaDefaultToken;
+	bibliaUrl = config.config.bibliaUrl;
+}
+
 
 this.getVerse = function(text, callback) {
 	console.log("Getting Reference from " + text);
