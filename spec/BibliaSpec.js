@@ -41,7 +41,7 @@ describe("Biblia", function() {
         }
       };
       
-      bib = new biblia.bib(request, token, urlBuilder);
+      bib = new biblia.Bib(request, token, urlBuilder);
       bib.getVerse(text, function(data) {
         expect(data.ok).toEqual(true);
         expect(data.text).toEqual('rawr');
@@ -64,7 +64,7 @@ describe("Biblia", function() {
         }
       };
       
-      bib = new biblia.bib(request, token, urlBuilder);
+      bib = new biblia.Bib(request, token, urlBuilder);
       bib.getVerse(text, function(data) {
         expect(data.ok).toEqual(false);
         expect(data.err).toEqual('No reference found');
@@ -84,7 +84,7 @@ describe("Biblia", function() {
         }
       };
       
-      bib = new biblia.bib(request, token, urlBuilder);
+      bib = new biblia.Bib(request, token, urlBuilder);
       bib.getPassageFromReference(reference, function(data) {
         expect(data).toEqual(requestResponse);
       });
