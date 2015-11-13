@@ -14,8 +14,6 @@ app.use(bodyParser.urlencoded({
 var bibliaToken;
 var bibliaDefaultToken;
 
-console.log(moment('12-15-15 1:30').format('MMMM Do YYYY, h:mm:ss a'));
-
 if((process.env.heroku || 'false') === 'true') {
   bibliaToken = process.env.bibliaToken;
   bibliaDefaultToken = process.env.bibliaDefaultToken;
