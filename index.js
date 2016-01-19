@@ -5,7 +5,8 @@ var moment = require('moment');
 var biblia = require('./lib/bibliaApiWrapper');
 var bibliaUrlBuilder = require('./lib/bibliaUrlBuilder');
 var converter = require('./lib/converter');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
+var xmljs = require('xml2js');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
@@ -66,6 +67,11 @@ app.post('/techrefinvite', function (req, res) {
   InviteToSlack(techrefurl, req.body.email, req.body.fname, req.body.lname, techreftoken, res);
 });
 
+app.get('/techrefepisodes', function (req, res) {
+    res.header('Access-Control-Allow-Origin', req.headers.origin);
+    GetTechRefEpisodeFeed(res);
+});
+
 function InviteToSlack(url, email, fname, lname, token, originalRes) {
   var options = {
     proxy: process.env.https_proxy,
@@ -77,3 +83,23 @@ function InviteToSlack(url, email, fname, lname, token, originalRes) {
     originalRes.send(body);
   });
 }
+
+function GetTechRefEpisodeFeed(origRes) {
+    var options = {
+        proxy: process.env.https_proxy,
+        url: 'http://feeds.feedburner.com/techreformation?format=xml',
+        method: 'GET',
+    };
+
+    request.get(options, function (err, res, body) {
+        xmljs.parseString(body, function(err, result) {
+            var items = [];
+            var list = result.rss.channel[0].item;
+            for(var i in list) {
+                var episode = list[i];
+                items.push({title: episode.title, date: episode.pubDate, description: episode.description, url: episode['media:content'][0].$.url})
+            }
+            origRes.send(items);
+        });
+    });
+};
