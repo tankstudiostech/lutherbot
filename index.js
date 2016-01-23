@@ -72,6 +72,10 @@ app.get('/techrefepisodes', function (req, res) {
     GetTechRefEpisodeFeed(res);
 });
 
+app.get('/techrefmembercount', function (req, res) {
+    GetTechRefMemberCount(res, techreftoken, techrefurl);
+});
+
 function InviteToSlack(url, email, fname, lname, token, originalRes) {
   var options = {
     proxy: process.env.https_proxy,
@@ -101,5 +105,23 @@ function GetTechRefEpisodeFeed(origRes) {
             }
             origRes.send(items);
         });
+    });
+};
+
+function GetTechRefMemberCount(origRes, token, url) {
+    var options = {
+        url: 'https://' + url + '/api/users.list?token=' + token +'&presence=1',
+        method: 'GET',
+    };
+
+    request.get(options, function (err, res, body) {
+        var parsed = JSON.parse(body);
+        var members = parsed.members;
+        members = members.filter(x => {
+            return x.id != "USLACKBOT" && !x.is_bot && !x.deleted;
+        });
+        var total = members.length;
+        members = members.filter(x => { return 'active' == x.presence; });
+        origRes.send({"total": total, "online": members.length});
     });
 };
