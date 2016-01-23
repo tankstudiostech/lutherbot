@@ -73,6 +73,7 @@ app.get('/techrefepisodes', function (req, res) {
 });
 
 app.get('/techrefmembercount', function (req, res) {
+    res.header('Access-Control-Allow-Origin', req.headers.origin);
     GetTechRefMemberCount(res, techreftoken, techrefurl);
 });
 
